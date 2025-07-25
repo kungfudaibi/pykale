@@ -26,8 +26,10 @@ from kale.embed.uncertainty_fitting import fit_and_predict
 from kale.interpret.uncertainty_quantiles import generate_fig_comparing_bins, generate_fig_individual_bin_comparison
 from kale.utils.download import download_file_by_url
 
-warnings.filterwarnings("error")
-
+# warnings.filterwarnings("error")
+warnings.filterwarnings('ignore', category=DeprecationWarning)
+warnings.filterwarnings('ignore', category=FutureWarning)
+warnings.filterwarnings('error', category=RuntimeWarning)  
 
 def arg_parse():
     """Parsing arguments"""
@@ -123,11 +125,17 @@ def main():
             for model in all_models_to_compare:
                 for landmark in landmarks:
                     # Define Paths for this loop
+                    # landmark_results_path_val = os.path.join(
+                    #     cfg.DATASET.ROOT, base_dir, model, dataset, uncertainty_pairs_val + "_l" + str(landmark)
+                    # )
+                    # landmark_results_path_test = os.path.join(
+                    #     cfg.DATASET.ROOT, base_dir, model, dataset, uncertainty_pairs_test + "_l" + str(landmark)
+                    # )
                     landmark_results_path_val = os.path.join(
-                        cfg.DATASET.ROOT, base_dir, model, dataset, uncertainty_pairs_val + "_l" + str(landmark)
+                        cfg.DATASET.ROOT, base_dir, model, dataset, uncertainty_pairs_val + "_t" + str(landmark)
                     )
                     landmark_results_path_test = os.path.join(
-                        cfg.DATASET.ROOT, base_dir, model, dataset, uncertainty_pairs_test + "_l" + str(landmark)
+                        cfg.DATASET.ROOT, base_dir, model, dataset, uncertainty_pairs_test + "_t" + str(landmark)
                     )
 
                     fitted_save_at = os.path.join(save_folder, "fitted_quantile_binning", model, dataset)
