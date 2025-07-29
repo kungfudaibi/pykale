@@ -2,7 +2,7 @@ import logging
 
 import pytest
 
-from kale.evaluate.uncertainty_metrics import evaluate_bounds, evaluate_jaccard
+from kale.evaluate.uncertainty_metrics_r import evaluate_bounds, evaluate_jaccard
 from kale.prepdata.tabular_transform import generate_struct_for_qbin
 
 # from kale.utils.download import download_file_by_url
