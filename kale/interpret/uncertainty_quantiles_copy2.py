@@ -391,29 +391,12 @@ class Box_plot:
             self.all_sample_label_x_locs.append(middle_x)  
             self.all_sample_percs.append([mean_perc, std_perc])
 
-    def _format_plot(
-        self,
-        ax,
-        save_path: Optional[str],
-        show_sample_info: str,
-        to_log: bool,
-        circ_patches: List[patches.Patch],
-        y_lim: float,
-        y_lim_min: float,
-        convert_to_percent: bool,
-        x_label: str,
-        y_label: str,
-        font_size_1: int,
-        font_size_2: int,
-        bin_label_locs: List[float],
-        x_axis_labels: List[str],
-        num_bins: int,
-        uncertainty_types_list: List[List[str]],
-        all_sample_percs: List[List[float]],
-        all_sample_label_x_locs: List[List[Any]],
-        max_bin_height: float,
-        comparing_q: bool = False,
-    ) -> None:
+    def _format_plot(self, save_path: Optional[str], show_sample_info: str, to_log: bool,  
+                y_lim: float, y_lim_min: float, convert_to_percent: bool,  
+                x_label: str, y_label: str, font_size_1: int, font_size_2: int,  
+                bin_label_locs: List[float], x_axis_labels: List[str],  
+                num_bins: int, uncertainty_types_list: List[List[str]],  
+                comparing_q: bool = False) -> None:
         """
         This function takes a matplotlib Axes object and formats the plot according to the provided parameters.
 
@@ -694,7 +677,7 @@ class Box_plot:
             middle_min_x_loc = self._calculate_spacing(num_bins, list_comp_bool, middle_min_x_loc)  
             outer_min_x_loc = self._calculate_spacing(num_bins, list_comp_bool, outer_min_x_loc)  
 
-        self._format_plot(self, save_path, show_sample_info, to_log, y_lim, y_lim_min,  
+        self._format_plot(save_path, show_sample_info, to_log, y_lim, y_lim_min,  
                          convert_to_percent, x_label, y_label, font_size_1, font_size_2,  
                          bin_label_locs, x_axis_labels, num_bins, uncertainty_types_list)
 
@@ -798,7 +781,7 @@ class Box_plot:
             
             outer_min_x_loc += self.config.outer_gap_large
         
-        self._format_plot(self, save_path, show_sample_info, to_log, y_lim, -0.1,
+        self._format_plot(save_path, show_sample_info, to_log, y_lim, -0.1,
                         convert_to_percent, x_label, y_label, 30, 30,
                         bin_label_locs, x_axis_labels, num_bins, uncertainty_types_list)
 
@@ -908,7 +891,7 @@ class Box_plot:
                 self.max_bin_height = max(max(rect["caps"][-1].get_ydata()), self.max_bin_height)
                 
                 if show_individual_dots:
-                    self._add_individual_dots(displayed_data, x_loc, [color], uncertainty_type_tuple)
+                    self._add_individual_dots(displayed_data, x_loc, [], [] ,alpha=self.config.dot_alpha_alt, custom_color=self.config.median_color)
                 
                 # Handle sample information
                 self._handle_sample_info(show_sample_info, model_data, all_b_data, rect, average_samples_per_bin)
@@ -921,7 +904,7 @@ class Box_plot:
             # Handle average sample info
             self.handle_average_info(show_sample_info, inbetween_locs, average_samples_per_bin)
         
-        self._format_plot(self, save_path, show_sample_info, to_log, y_lim, -0.1,
+        self._format_plot(save_path, show_sample_info, to_log, y_lim, -0.1,
                         convert_to_percent, x_label, y_label, 30, 25,
                         bin_label_locs, x_axis_labels, num_bins_display, 
                         uncertainty_type_tuple, comparing_q=True)
