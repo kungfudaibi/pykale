@@ -23,7 +23,7 @@ from pandas import *
 
 import kale.utils.logger as logging
 from kale.embed.uncertainty_fitting import fit_and_predict
-from kale.interpret.uncertainty_quantiles_copy2 import generate_fig_comparing_bins, generate_fig_individual_bin_comparison
+from kale.interpret.uncertainty_quantiles import generate_fig_comparing_bins, generate_fig_individual_bin_comparison
 from kale.utils.download import download_file_by_url
 
 # warnings.filterwarnings("error")

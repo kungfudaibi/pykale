@@ -19,7 +19,11 @@ import pandas as pd
 from kale.evaluate.similarity_metrics import jaccard_similarity
 from kale.prepdata.string_transform import strip_for_bound
 
-class BaseUncertaintyEvaluator:  
+class BaseUncertaintyEvaluator: 
+
+    """
+    Base class for uncertainty evaluation handlers.
+    """ 
     def __init__(self, num_bins: int, targets: List[int], num_folds: int = 8, combine_middle_bins: bool = False):  
         self.num_bins = 3 if combine_middle_bins else num_bins  
         self.original_num_bins = num_bins  
@@ -49,7 +53,7 @@ class BaseUncertaintyEvaluator:
         return fold_accumulator  
   
     # Abstract methods that must be implemented by subclasses  
-
+    @abstractmethod
     def _accumulate_fold_result(self, fold_accumulator: Dict, fold_result: Dict) -> None:  
         pass
     
@@ -73,7 +77,10 @@ class BaseUncertaintyEvaluator:
     def _finalize_results(self, results: Dict) -> Dict:  
         pass
     
-class FoldDataProcessor:  
+class FoldDataProcessor:
+    """
+    A utility class to handle processing of fold data for uncertainty evaluation.
+    """  
     @staticmethod  
     def extract_fold_data(data_structs: pd.DataFrame, fold: int, uncertainty_type: str) -> Dict[str, pd.DataFrame]:  
         fold_filter = data_structs["Testing Fold"] == fold  
@@ -106,7 +113,7 @@ class FoldDataProcessor:
 
 
 class BoundEvaluationHandler(BaseUncertaintyEvaluator):  
-
+    
     def _initialize_results(self) -> Dict:  
         return {  
             "all_bound_percents": {},  
@@ -426,18 +433,82 @@ class ErrorEvaluationHandler(BaseUncertaintyEvaluator):
 def evaluate_bounds(estimated_bounds: Dict[str, pd.DataFrame], bin_predictions: Dict[str, pd.DataFrame],   
                    uncertainty_pairs: List, num_bins: int, targets: List[int],   
                    num_folds: int = 8, show_fig: bool = False, combine_middle_bins: bool = False) -> Dict:  
+    """
+    Evaluates error bounds for given uncertainty pairs and estimated bounds.
+
+    Args:
+        estimated_bounds (Dict[str, pd.DataFrame]): Dictionary of error bounds for each model.
+        bin_predictions (Dict[str, pd.DataFrame]): Dictionary of bin predictions for each model.
+        uncertainty_pairs (List[List[str]]): List of uncertainty pairs to be evaluated.
+        num_bins (int): Number of bins to be used.
+        targets (List[str]): List of targets to be evaluated.
+        num_folds (int, optional): Number of folds for cross-validation. Defaults to 8.
+        show_fig (bool, optional): Flag to show the figure. Defaults to False.
+        combine_middle_bins (bool, optional): Flag to combine the middle bins. Defaults to False.
+
+    Returns:
+        Dict: Dictionary containing evaluation results.
+    """
+
     evaluator = BoundEvaluationHandler(num_bins, targets, num_folds, combine_middle_bins)  
+
     return evaluator.evaluate(bin_predictions, uncertainty_pairs,   
                             estimated_bounds=estimated_bounds, show_fig=show_fig)  
   
 def evaluate_jaccard(bin_predictions, uncertainty_pairs, num_bins, targets,   
                     num_folds=8, combine_middle_bins=False):  
+    """
+        Evaluate uncertainty estimation's ability to predict true error quantiles.
+        For each bin, we calculate the jaccard index (JI) between the pred bins and GT error quantiles.
+        We calculate the JI for each dictionary in the bin_predictions dict. For each bin, we calculate: a) the mean and
+        std over all folds and all targets b) the mean and std for each target over all folds.
+
+    Args:
+        bin_predictions (Dict): dict of Pandas Dataframes where each dataframe has errors, predicted bins for all uncertainty measures for a model,
+        uncertainty_pairs ([list]): list of lists describing the different uncert combinations to test,
+        num_bins (int): Number of quantile bins,
+        targets (list) list of targets to measure uncertainty estimation,
+        num_folds (int): Number of folds,
+
+
+    Returns:
+        [Dict]: Dicts with JI for all targets combined and targets seperated.
+    """ 
     evaluator = JaccardEvaluationHandler(num_bins, targets, num_folds, combine_middle_bins)  
+
     return evaluator.evaluate(bin_predictions, uncertainty_pairs)  
   
 def get_mean_errors(bin_predictions: Dict[str, pd.DataFrame], uncertainty_pairs: List,   
                    num_bins: int, targets: List[int], num_folds: int = 8,   
-                   error_scaling_factor: float = 1.0, combine_middle_bins: bool = False) -> Dict:  
+                   error_scaling_factor: float = 1.0, combine_middle_bins: bool = False) -> Dict: 
+
+    """
+    Evaluate uncertainty estimation's mean error of each bin.
+    For each bin, we calculate the mean localization error for each target and for all targets.
+    We calculate the mean error for each dictionary in the bin_predictions dict. For each bin, we calculate: a) the mean
+    and std over all folds and all targets b) the mean and std for each target over all folds.
+
+    Args:
+        bin_predictions (Dict): Dict of Pandas DataFrames where each DataFrame has errors, predicted bins for all
+        uncertainty measures for a model.
+        uncertainty_pairs (List[Tuple[str, str]]): List of tuples describing the different uncertainty combinations to test.
+        num_bins (int): Number of quantile bins.
+        targets (List[str]): List of targets to measure uncertainty estimation.
+        num_folds (int, optional): Number of folds. Defaults to 8.
+        error_scaling_factor (int, optional): Scale error factor. Defaults to 1.
+        combine_middle_bins (bool, optional): Combine middle bins if True. Defaults to False.
+
+    Returns:
+        Dict[str, Union[Dict[str, List[List[float]]], List[Dict[str, List[float]]]]]: Dictionary with mean error for all
+         targets combined and targets separated.
+            Keys that are returned:
+                "all mean error bins nosep":  For every fold, the mean error for each bin. All targets are combined in the same list.
+                "all mean error bins targets sep":   For every fold, the mean error for each bin. Each target is in a separate list.
+                "all error concat bins targets nosep":  For every fold, every error value in a list. Each target is in the same list. The list is flattened for all the folds.
+                "all error concat bins targets sep foldwise":  For every fold, every error value in a list. Each target is in a separate list. Each list has a list of results by fold.
+                "all error concat bins targets sep all": For every fold, every error value in a list. Each target is in a separate list. The list is flattened for all the folds.
+
+    """ 
     evaluator = ErrorEvaluationHandler(num_bins, targets, num_folds, combine_middle_bins)  
     return evaluator.evaluate(bin_predictions, uncertainty_pairs,   
                             error_scaling_factor=error_scaling_factor)
