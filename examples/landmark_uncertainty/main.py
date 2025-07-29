@@ -26,7 +26,7 @@ from kale.embed.uncertainty_fitting import fit_and_predict
 from kale.interpret.uncertainty_quantiles import generate_fig_comparing_bins, generate_fig_individual_bin_comparison
 from kale.utils.download import download_file_by_url
 
-# warnings.filterwarnings("error")
+
 warnings.filterwarnings('ignore', category=DeprecationWarning)
 warnings.filterwarnings('ignore', category=FutureWarning)
 warnings.filterwarnings('error', category=RuntimeWarning)  
