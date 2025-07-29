@@ -7,7 +7,7 @@ in IEEE Transactions on Medical Imaging, vol. 42, no. 4, pp. 1021-1034, April 20
 Functions related to interpreting the uncertainty quantiles from the quantile binning method in terms of:
    A) Correlation of uncertainty with error (fit_line_with_ci)
    B) Perform Isotonic regression on uncertainty & error pairs (quantile_binning_and_est_errors)
-   C) Plot boxplots: generic_box_plot_loop, format_plot, Box_plot().box_plot_per_model, box_plot_comparing_q
+   C) Plot boxplots: generic_box_plot_loop, format_plot, box_plot_per_model, box_plot_comparing_q
    D) Plot cumularive error plots: plot_cumulative
    E) Big caller functions for analysis loop for QBinning:  generate_fig_individual_bin_comparison, generate_fig_comparing_bins
 
