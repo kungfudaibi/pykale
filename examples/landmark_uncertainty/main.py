@@ -124,13 +124,7 @@ def main():
 
             for model in all_models_to_compare:
                 for landmark in landmarks:
-                    # Define Paths for this loop
-                    # landmark_results_path_val = os.path.join(
-                    #     cfg.DATASET.ROOT, base_dir, model, dataset, uncertainty_pairs_val + "_l" + str(landmark)
-                    # )
-                    # landmark_results_path_test = os.path.join(
-                    #     cfg.DATASET.ROOT, base_dir, model, dataset, uncertainty_pairs_test + "_l" + str(landmark)
-                    # )
+
                     landmark_results_path_val = os.path.join(
                         cfg.DATASET.ROOT, base_dir, model, dataset, uncertainty_pairs_val + "_t" + str(landmark)
                     )
