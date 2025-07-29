@@ -7,7 +7,7 @@ in IEEE Transactions on Medical Imaging, vol. 42, no. 4, pp. 1021-1034, April 20
 Functions related to interpreting the uncertainty quantiles from the quantile binning method in terms of:
    A) Correlation of uncertainty with error (fit_line_with_ci)
    B) Perform Isotonic regression on uncertainty & error pairs (quantile_binning_and_est_errors)
-   C) Plot boxplots: generic_box_plot_loop, format_plot, box_plot_per_model, box_plot_comparing_q
+   C) Plot boxplots: generic_box_plot_loop, format_plot, Box_plot().box_plot_per_model, box_plot_comparing_q
    D) Plot cumularive error plots: plot_cumulative
    E) Big caller functions for analysis loop for QBinning:  generate_fig_individual_bin_comparison, generate_fig_comparing_bins
 
@@ -694,7 +694,7 @@ class Box_plot:
             middle_min_x_loc = self._calculate_spacing(num_bins, list_comp_bool, middle_min_x_loc)  
             outer_min_x_loc = self._calculate_spacing(num_bins, list_comp_bool, outer_min_x_loc)  
 
-        self._format_plot(save_path, show_sample_info, to_log, y_lim, y_lim_min,  
+        self._format_plot(self, save_path, show_sample_info, to_log, y_lim, y_lim_min,  
                          convert_to_percent, x_label, y_label, font_size_1, font_size_2,  
                          bin_label_locs, x_axis_labels, num_bins, uncertainty_types_list)
 
@@ -798,7 +798,7 @@ class Box_plot:
             
             outer_min_x_loc += self.config.outer_gap_large
         
-        self._format_plot(save_path, show_sample_info, to_log, y_lim, -0.1,
+        self._format_plot(self, save_path, show_sample_info, to_log, y_lim, -0.1,
                         convert_to_percent, x_label, y_label, 30, 30,
                         bin_label_locs, x_axis_labels, num_bins, uncertainty_types_list)
 
@@ -921,7 +921,7 @@ class Box_plot:
             # Handle average sample info
             self.handle_average_info(show_sample_info, inbetween_locs, average_samples_per_bin)
         
-        self._format_plot(save_path, show_sample_info, to_log, y_lim, -0.1,
+        self._format_plot(self, save_path, show_sample_info, to_log, y_lim, -0.1,
                         convert_to_percent, x_label, y_label, 30, 25,
                         bin_label_locs, x_axis_labels, num_bins_display, 
                         uncertainty_type_tuple, comparing_q=True)
@@ -1239,7 +1239,7 @@ def generate_fig_individual_bin_comparison(data: Tuple, display_settings: dict) 
                     save_folder, save_file_preamble + dotted_addition + "_error_all_targets.pdf"
                 )
 
-            box_plot_per_model(
+            Box_plot().box_plot_per_model(
                 cmaps,
                 all_bins_concat_targets_nosep_error,
                 uncertainty_error_pairs,
@@ -1268,7 +1268,7 @@ def generate_fig_individual_bin_comparison(data: Tuple, display_settings: dict) 
 
                         logger.info("individual error for T%s", idx_l)
 
-                        box_plot_per_model(
+                        Box_plot().box_plot_per_model(
                             cmaps,
                             target_data,
                             uncertainty_error_pairs,
@@ -1292,7 +1292,7 @@ def generate_fig_individual_bin_comparison(data: Tuple, display_settings: dict) 
                     save_folder, save_file_preamble + dotted_addition + "mean_error_folds_all_targets.pdf"
                 )
 
-            box_plot_per_model(
+            Box_plot().box_plot_per_model(
                 cmaps,
                 all_error_data,
                 uncertainty_error_pairs,
@@ -1313,7 +1313,7 @@ def generate_fig_individual_bin_comparison(data: Tuple, display_settings: dict) 
             if save_figures_bool:
                 save_location = os.path.join(save_folder, save_file_preamble + "_errorbound_all_targets.pdf")
 
-            generic_box_plot_loop(
+            Box_plot().generic_box_plot_loop(
                 cmaps,
                 all_bound_data,
                 uncertainty_error_pairs,
@@ -1343,7 +1343,7 @@ def generate_fig_individual_bin_comparison(data: Tuple, display_settings: dict) 
 
                         logger.info("individual errorbound acc for T%s", idx_l)
 
-                        generic_box_plot_loop(
+                        Box_plot().generic_box_plot_loop(
                             cmaps,
                             target_data,
                             uncertainty_error_pairs,
@@ -1368,7 +1368,7 @@ def generate_fig_individual_bin_comparison(data: Tuple, display_settings: dict) 
             if save_figures_bool:
                 save_location = os.path.join(save_folder, save_file_preamble + "_jaccard_all_targets.pdf")
 
-            generic_box_plot_loop(
+            Box_plot().generic_box_plot_loop(
                 cmaps,
                 all_jaccard_data,
                 uncertainty_error_pairs,
@@ -1391,7 +1391,7 @@ def generate_fig_individual_bin_comparison(data: Tuple, display_settings: dict) 
             if save_figures_bool:
                 save_location = os.path.join(save_folder, save_file_preamble + "_recall_jaccard_all_targets.pdf")
 
-            generic_box_plot_loop(
+            Box_plot().generic_box_plot_loop(
                 cmaps,
                 all_recall_data,
                 uncertainty_error_pairs,
@@ -1415,7 +1415,7 @@ def generate_fig_individual_bin_comparison(data: Tuple, display_settings: dict) 
             if save_figures_bool:
                 save_location = os.path.join(save_folder, save_file_preamble + "_precision_jaccard_all_targets.pdf")
 
-            generic_box_plot_loop(
+            Box_plot().generic_box_plot_loop(
                 cmaps,
                 all_precision_data,
                 uncertainty_error_pairs,
@@ -1447,7 +1447,7 @@ def generate_fig_individual_bin_comparison(data: Tuple, display_settings: dict) 
 
                         logger.info("individual jaccard for T%s", idx_l)
 
-                        generic_box_plot_loop(
+                        Box_plot().generic_box_plot_loop(
                             cmaps,
                             target_data,
                             uncertainty_error_pairs,
@@ -1645,7 +1645,7 @@ def generate_fig_comparing_bins(
                     save_folder, save_file_preamble + dotted_addition + "_error_all_targets.pdf"
                 )
 
-            box_plot_comparing_q(
+            Box_plot().box_plot_comparing_q(
                 all_bins_concat_targets_nosep_error,
                 uncertainty_error_pair_list,
                 model_list,
@@ -1676,7 +1676,7 @@ def generate_fig_comparing_bins(
                             )
 
                         logger.info("individual error for T%s", target_idx)
-                        box_plot_comparing_q(
+                        Box_plot().box_plot_comparing_q(
                             target_data,
                             uncertainty_error_pair_list,
                             model_list,
@@ -1698,7 +1698,7 @@ def generate_fig_comparing_bins(
                 save_location = os.path.join(
                     save_folder, save_file_preamble + dotted_addition + "mean_error_folds_all_targets.pdf"
                 )
-            box_plot_comparing_q(
+            Box_plot().box_plot_comparing_q(
                 all_error_data,
                 uncertainty_error_pair_list,
                 model_list,
@@ -1723,7 +1723,7 @@ def generate_fig_comparing_bins(
             if save_figures_bool:
                 save_location = os.path.join(save_folder, save_file_preamble + "_errorbound_all_targets.pdf")
 
-            box_plot_comparing_q(
+            Box_plot().box_plot_comparing_q(
                 all_bound_data,
                 uncertainty_error_pair_list,
                 model_list,
@@ -1752,7 +1752,7 @@ def generate_fig_comparing_bins(
                             )
 
                         logger.info("individual errorbound acc for T%s", target_idx)
-                        box_plot_comparing_q(
+                        Box_plot().box_plot_comparing_q(
                             target_data,
                             uncertainty_error_pair_list,
                             model_list,
@@ -1774,7 +1774,7 @@ def generate_fig_comparing_bins(
             if save_figures_bool:
                 save_location = os.path.join(save_folder, save_file_preamble + "_jaccard_all_targets.pdf")
 
-            box_plot_comparing_q(
+            Box_plot().box_plot_comparing_q(
                 all_jaccard_data,
                 uncertainty_error_pair_list,
                 model_list,
@@ -1795,7 +1795,7 @@ def generate_fig_comparing_bins(
 
             if save_figures_bool:
                 save_location = os.path.join(save_folder, save_file_preamble + "_recall_jaccard_all_targets.pdf")
-            box_plot_comparing_q(
+            Box_plot().box_plot_comparing_q(
                 all_recall_data,
                 uncertainty_error_pair_list,
                 model_list,
@@ -1816,7 +1816,7 @@ def generate_fig_comparing_bins(
 
             if save_figures_bool:
                 save_location = os.path.join(save_folder, save_file_preamble + "_precision_jaccard_all_targets.pdf")
-            box_plot_comparing_q(
+            Box_plot().box_plot_comparing_q(
                 all_precision_data,
                 uncertainty_error_pair_list,
                 model_list,
@@ -1844,7 +1844,7 @@ def generate_fig_comparing_bins(
                             )
 
                         logger.info("individual jaccard for T%s", target_idx)
-                        box_plot_comparing_q(
+                        Box_plot().box_plot_comparing_q(
                             target_data,
                             uncertainty_error_pair_list,
                             model_list,
